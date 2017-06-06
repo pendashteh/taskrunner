@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+
+# Usage:
+# Include the following line in your script:
+# 	> . taskrunner
+# Now you can call your own script, like this:
+#   $ myapp customcommand
+# This will execute ./customcommand.sh
+#
+# You can customise the command script file names using the following two variable before you call `. taskrunner`
+#   > taskrunner_prefix="_"
+#   > taskrunner_suffix=".sh"
+# In the above example, your command script must look like this:
+#   ./_customcommand.sh
+
+# Helper functions to get the abolute path for the command
+# Copyright http://stackoverflow.com/a/7400673/257479
+myreadlink() { [ ! -h "$1" ] && echo "$1" || (local link="$(expr "$(command ls -ld -- "$1")" : '.*-> \(.*\)$')"; cd $(dirname $1); myreadlink "$link" | sed "s|^\([^/].*\)\$|$(dirname $1)/\1|"); }
+whereis() { echo $1 | sed "s|^\([^/].*/.*\)|$(pwd)/\1|;s|^\([^/]*\)$|$(which -- $1)|;s|^$|$1|"; } 
+whereis_realpath() { local SCRIPT_PATH=$(whereis $1); myreadlink ${SCRIPT_PATH} | sed "s|^\([^/].*\)\$|$(dirname ${SCRIPT_PATH})/\1|"; } 
+
+script_root=$(dirname $(whereis_realpath "$0"))
+
+[ ! "$taskrunner_prefix" ] && taskrunner_prefix=""
+[ ! "$taskrunner_suffix" ] && taskrunner_suffix=".sh"
+
+taskrunner_run_task() {
+	local task=$1
+	local task_args="${@:2}"
+	task_script_path=$script_root/"$taskrunner_prefix""$task""$taskrunner_suffix"
+	if [ ! -e "$task_script_path" ]
+		then
+		echo "Task '$task' was not found. (Expected at $task_script_path)"
+		exit 1
+	fi
+	. $task_script_path $task_args
+}
+task=$1
+[ ! "$task" ] && echo "No task provided." && exit 1
+taskrunner_run_task $task "${@:3}"
