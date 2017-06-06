@@ -1,4 +1,5 @@
 {
     "name": "pendashteh/taskrunner",
-    "description": "Taskrunner for Bash"
+    "description": "Taskrunner for Bash",
+    "bin": ["taskrunner"]
 }
