@@ -38,4 +38,6 @@ taskrunner_run_task() {
 }
 task=$1
 [ ! "$task" ] && task="default"
+
+taskrunner_args=${@:2}
 taskrunner_run_task $task "${*}"
