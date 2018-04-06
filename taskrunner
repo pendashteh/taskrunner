@@ -22,8 +22,8 @@ whereis_realpath() { local SCRIPT_PATH=$(whereis $1); myreadlink ${SCRIPT_PATH} 
 
 script_root=$(dirname $(whereis_realpath "$0"))
 
-[ ! "$taskrunner_prefix" ] && taskrunner_prefix=""
-[ ! "$taskrunner_suffix" ] && taskrunner_suffix=".sh"
+taskrunner_prefix=${taskrunner_prefix:-""}
+taskrunner_suffix=${taskrunner_suffix:-""}
 
 taskrunner_run_task() {
 	local task=$1
