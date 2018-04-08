@@ -3,4 +3,6 @@
 taskrunner_prefix="_tools/"
 taskrunner_suffix=".sh"
 
-. ../bin/taskrunner
+__DIR__=$(dirname $(readlink -f $0))
+. $(dirname $__DIR__)/bin/taskrunner
+
